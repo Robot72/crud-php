@@ -66,17 +66,27 @@ class Application
         return substr($set, 0, -2);
     }
 
-    public function pdoQuery($tableName) 
+    public function pdoQueryPage($tableName) 
     {
         if(isset($_GET['page'])) 
             $page = $_GET['page'];
         else 
             $page = 0;
         $sql = "SELECT * FROM $tableName LIMIT $page, $this->_sizePage";
-        //$sql = "SELECT * FROM countries LIMIT 0, 30";
         return $this->_connection->query($sql);
     }
     
+    public function pdoQueryAllRows($tableName) 
+    {
+        $sql = "SELECT * FROM $tableName";
+        return $this->_connection->query($sql);
+    }
+    
+    /**
+     * Получить количество строк в таблице по ее имени
+     * @param string $tableName
+     * @return integer возвращает количество строк в таблице
+     */
     public function getCountRows($tableName)
     {
         $sql = "SELECT count(*) FROM $tableName";
@@ -91,12 +101,12 @@ class Application
      * @param type $id
      * @return type
      */
-    public function getCountryName($id) 
+    public function getRowById($id, $tableName) 
     {
-        $sth = $this->_connection->prepare('SELECT * FROM countries WHERE id = :id');
+        $sth = $this->_connection->prepare("SELECT * FROM $tableName WHERE id = :id");
         $sth->execute([':id' => $id]);
-        $record = $sth->fetch();
-        return $record['name'];
+        $row = $sth->fetch();
+        return $row;
     }
 
     public function handlerCountry() 
@@ -108,48 +118,71 @@ class Application
             die('Ошибка в запросе');
         }
         if($opr == Application::OPERATION_CREATE && $_POST['name'])
-            $this->createCountry();
+            $this->createRow('countries', ['name'], 'countries');
         if($opr == Application::OPERATION_DELETE)
-            $this->deleteCountry($id);           
+            $this->deleteRow($id, 'countries', 'countries');           
         if($opr == Application::OPERATION_UPDATE && $_POST['name'])
-            $this->updateCountry($id);
+            $this->updateRow($id, 'countries', ['name'], 'countries');
     }
+    
+    public function handlerRequest($tableName, $columns, $scriptName, $requireColumn) 
+    {
+        if(empty($_GET['operation']) && empty($_GET['id'])) 
+            die('Ошибка в запросе');
+        if($_GET['operation'] == Application::OPERATION_CREATE && isset($_POST[$requireColumn]))
+            $this->createRow($tableName, $columns, $scriptName);
+        if($_GET['operation'] == Application::OPERATION_DELETE)
+            $this->deleteRow($_GET['id'], $tableName, $scriptName);           
+        if($_GET['operation'] == Application::OPERATION_UPDATE && isset($_POST[$requireColumn]))
+            $this->updateRow($_GET['id'], $tableName, $columns, $scriptName);
+    }
+    
     /**
      * INSERT страну
+     * @param string $tableName имя таблицы с которой будем производить операцию
+     * @param array $columns столбцы этой таблицы
+     * @param string $scriptName имя скрипта на который редиректим
      */
-    private function createCountry()
+    private function createRow($tableName, $columns, $scriptName)
     {
-        $allowed = array("name"); 
-        $sql = "INSERT INTO countries SET ".$this->pdoSet($allowed);
+        $sql = "INSERT INTO $tableName SET ".$this->pdoSet($columns);
         $sth = $this->_connection->prepare($sql);
         $sth->execute($this->_values);
-        $this->redirectToCountries();
+        $this->redirectToPage($scriptName);
     }
     
     /**
      * UPDATE наименования страны по ID
-     * @param type $id
+     * @param integer $id
+     * @param string $tableName имя таблицы с которой будем производить операцию
+     * @param array $columns столбцы этой таблицы
+     * @param string $scriptName имя скрипта на который редиректим
      */
-    private function updateCountry($id)
+    private function updateRow($id, $tableName, $columns, $scriptName)
     {
-        $allowed = array("name"); 
-        $sql = "UPDATE countries SET ".$this->pdoSet($allowed)." WHERE id = $id";
+        $sql = "UPDATE $tableName SET ".$this->pdoSet($columns)." WHERE id = $id";
         $sth = $this->_connection->prepare($sql);
         $sth->execute($this->_values);
-        $this->redirectToCountries();
+        $this->redirectToPage($scriptName);
     }
     
-    private function deleteCountry($id)
+    /**
+     * Удаление строки в таблице
+     * @param type $id
+     * @param string $tableName имя таблицы с которой будем производить операцию
+     * @param string $scriptName имя скрипта на который редиректим
+     */
+    private function deleteRow($id, $tableName, $scriptName)
     {
-        $sql = "DELETE FROM countries WHERE id = $id";
+        $sql = "DELETE FROM $tableName WHERE id = $id";
         $sth = $this->_connection->prepare($sql);
         $sth->execute();
-        $this->redirectToCountries();
+        $this->redirectToPage($scriptName);
     }
     
-    private function redirectToCountries()
+    private function redirectToPage($scriptName)
     {
         $host = $_SERVER['SERVER_NAME'];
-        header("Location: http://$host/countries.php");
+        header("Location: http://$host/$scriptName.php");
     }    
 }

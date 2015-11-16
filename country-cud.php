@@ -5,7 +5,7 @@ function __autoload($className) {
 }
 $app = Application::getInstance();
 $app->handlerCountry();
-$name = $app->getCountryName($_GET['id']);
+$row = $app->getRowById($_GET['id'], 'countries');
 ?>
 <?php include('header.php') ?>
 <div class="content">
@@ -13,12 +13,11 @@ $name = $app->getCountryName($_GET['id']);
     <div class="form-group">
         <form method="post">
             <div class="input-group">
-                <input type="text" name="name" class="form-control" value="<?= $name ?>">
+                <input type="text" name="name" class="form-control" value="<?= $row['name'] ?>">
                 <br><br>
                 <input type="submit" class="btn btn-success">
             </div>
         </form>
     </div>
 </div>
-<?php include('footer.php') ?>
-                
+<?php include('footer.php');

@@ -6,7 +6,7 @@ function __autoload($className) {
 }
 
 $app = Application::getInstance();
-$stmt = $app->pdoQuery('countries');
+$stmt = $app->pdoQueryPage('countries');
 ?>
 <?php include('header.php') ?>
 <div class="content">
@@ -33,5 +33,4 @@ $stmt = $app->pdoQuery('countries');
     </div>
     <?= Paginator::getListPages('countries', $app->getCountRows('countries')) ?>
 </div>
-<?php include('footer.php') ?>
-                
+<?php include('footer.php');

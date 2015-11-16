@@ -21,5 +21,4 @@ function __autoload($className) {
 
     </div>
 </div>
-<?php include('footer.php') ?>
-                
+<?php include('footer.php');

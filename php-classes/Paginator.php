@@ -43,7 +43,7 @@ class Paginator
         for($i=0; $i<self::$_pages+1; $i++) {
             $num = $i+1;
             $page = $i*10;
-            $currentPage = $_GET['page'];
+            $currentPage = isset($_GET['page']) ? $_GET['page'] : 0;
             if($currentPage == $page) {
                 self::$_currentPage = $currentPage;
                 $str .= "<li class=\"active\"><a href=\"$nameTable.php?page=$page\">$num</a></li>";
@@ -55,7 +55,7 @@ class Paginator
     }
     
     /**
-     * Заполнение номером стрелки назад и вперед
+     * Заполнение параметра в сслылках-стрелках "назад" и "вперед"
      */
     private static function setPrevNext()
     {
