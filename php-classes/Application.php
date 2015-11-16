@@ -109,30 +109,26 @@ class Application
         return $row;
     }
 
-    public function handlerCountry() 
-    {
-        if(isset($_GET['operation']) && isset($_GET['id'])) {
-            $opr = $_GET['operation'];
-            $id = $_GET['id'];
-        } else {
-            die('Ошибка в запросе');
-        }
-        if($opr == Application::OPERATION_CREATE && $_POST['name'])
-            $this->createRow('countries', ['name'], 'countries');
-        if($opr == Application::OPERATION_DELETE)
-            $this->deleteRow($id, 'countries', 'countries');           
-        if($opr == Application::OPERATION_UPDATE && $_POST['name'])
-            $this->updateRow($id, 'countries', ['name'], 'countries');
-    }
-    
+    /**
+     * Обработка запроса на операции создание, обновления и удаления записей
+     * @param string $tableName имя таблицы с которой будем производить операцию
+     * @param array $columns столбцы таблицы
+     * @param string $scriptName имя скрипта на который будет осуществлен редирект
+     * @param string $requireColumn название столбца обызательного для заполнения
+     */
     public function handlerRequest($tableName, $columns, $scriptName, $requireColumn) 
     {
         if(empty($_GET['operation']) && empty($_GET['id'])) 
             die('Ошибка в запросе');
         if($_GET['operation'] == Application::OPERATION_CREATE && isset($_POST[$requireColumn]))
             $this->createRow($tableName, $columns, $scriptName);
-        if($_GET['operation'] == Application::OPERATION_DELETE)
-            $this->deleteRow($_GET['id'], $tableName, $scriptName);           
+        if($_GET['operation'] == Application::OPERATION_DELETE) {
+            if(empty($_GET['reltable']) && empty($_GET['fk'])) {
+                $this->deleteRow($_GET['id'], $tableName, $scriptName);
+            } else {
+                $this->deleteRelRow($_GET['id'], $tableName, $scriptName, $_GET['reltable'], $_GET['fk']);
+            }
+        }
         if($_GET['operation'] == Application::OPERATION_UPDATE && isset($_POST[$requireColumn]))
             $this->updateRow($_GET['id'], $tableName, $columns, $scriptName);
     }
@@ -180,6 +176,29 @@ class Application
         $this->redirectToPage($scriptName);
     }
     
+    /**
+     * Удаление строки в таблице, и строк в связанной таблице по ее внешнему ключу
+     * @param type $id
+     * @param string $tableName имя таблицы с которой будем производить операцию
+     * @param string $scriptName имя скрипта на который редиректим
+     * @param string $relTableName имя связанной таблицы
+     * @param string $fk внешний ключ
+     */
+    private function deleteRelRow($id, $tableName, $scriptName, $relTableName, $fk)
+    {
+        $sql = "DELETE FROM $relTableName WHERE $fk = $id";
+        $sth = $this->_connection->prepare($sql);
+        $sth->execute();
+        $sql = "DELETE FROM $tableName WHERE id = $id";
+        $sth = $this->_connection->prepare($sql);
+        $sth->execute();
+        $this->redirectToPage($scriptName);
+    }
+    
+    /**
+     * Редирект на страницу указанной в строке параметре (без '.php')
+     * @param string $scriptName
+     */
     private function redirectToPage($scriptName)
     {
         $host = $_SERVER['SERVER_NAME'];

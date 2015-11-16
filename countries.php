@@ -25,7 +25,7 @@ $stmt = $app->pdoQueryPage('countries');
                     <td><?= $row['name'] ?></td>
                     <td>
                         <a href="country-cud.php?id=<?= $row['id'] ?>&operation=2"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Редактировать</a><br>
-                        <a href="country-cud.php?id=<?= $row['id'] ?>&operation=0"><span class="glyphicon glyphicon-remove">&nbsp;</span>Удалить</a>
+                        <a href="country-cud.php?id=<?= $row['id'] ?>&operation=0&reltable=brands&fk=id_country"><span class="glyphicon glyphicon-remove">&nbsp;</span>Удалить</a>
                     </td>
                 </tr>
             <?php } ?>

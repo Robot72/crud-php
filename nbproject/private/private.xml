@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/mr/workspace/Markup/CrudPhp/index.php</file>
-            <file>file:/home/mr/workspace/Markup/CrudPhp/lib1.php</file>
-            <file>file:/home/mr/workspace/Markup/CrudPhp/lib2.php</file>
-            <file>file:/home/mr/workspace/Markup/CrudPhp/myapp1.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/php-classes/Application.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/index.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/country-cud.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/php-classes/Paginator.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/product-cud.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/brand-cud.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/countries.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/products.php</file>
+            <file>file:/home/mr/workspace/Review/CRUD-PHP/brands.php</file>
         </group>
     </open-files>
 </project-private>

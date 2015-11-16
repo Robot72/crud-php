@@ -27,7 +27,7 @@ $stmt = $app->pdoQueryPage('brands');
                     <td><?= $row['name'] ?></td>
                     <td>
                         <a href="brand-cud.php?id=<?= $row['id'] ?>&operation=2"><span class="glyphicon glyphicon-pencil">&nbsp;</span>Редактировать</a><br>
-                        <a href="brand-cud.php?id=<?= $row['id'] ?>&operation=0"><span class="glyphicon glyphicon-remove">&nbsp;</span>Удалить</a>
+                        <a href="brand-cud.php?id=<?= $row['id'] ?>&operation=0&reltable=products&fk=id_brand"><span class="glyphicon glyphicon-remove">&nbsp;</span>Удалить</a>
                     </td>
                 </tr>
             <?php } ?>

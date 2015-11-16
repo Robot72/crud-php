@@ -4,7 +4,7 @@ function __autoload($className) {
     require_once("php-classes/$className.php");
 }
 $app = Application::getInstance();
-$app->handlerCountry();
+$app->handlerRequest('countries', ['name'], 'countries', 'name');
 $row = $app->getRowById($_GET['id'], 'countries');
 ?>
 <?php include('header.php') ?>
