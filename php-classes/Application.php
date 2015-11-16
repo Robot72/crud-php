@@ -8,6 +8,7 @@ class Application
     
     private $_connection;
     private $_values;
+    private $_sizePage = 10;
 
     private $_host = 'localhost';
     private $_dbname = 'task1';
@@ -41,7 +42,7 @@ class Application
             return self::$_instance;
         }
     }
-
+    
     /**
      * Вспомогательный метод для построения запросов INSERT/UPDATE
      * Соглашение: имена полей в форме должны соответствовать именам полей в таблице
@@ -65,9 +66,24 @@ class Application
         return substr($set, 0, -2);
     }
 
-    public function getCountries() 
+    public function pdoQuery($tableName) 
     {
-        return $this->_connection->query('SELECT * FROM countries');
+        if(isset($_GET['page'])) 
+            $page = $_GET['page'];
+        else 
+            $page = 0;
+        $sql = "SELECT * FROM $tableName LIMIT $page, $this->_sizePage";
+        //$sql = "SELECT * FROM countries LIMIT 0, 30";
+        return $this->_connection->query($sql);
+    }
+    
+    public function getCountRows($tableName)
+    {
+        $sql = "SELECT count(*) FROM $tableName";
+        $sth = $this->_connection->query($sql);
+        $sth->execute();
+        $row = $sth->fetch();
+        return $row['count(*)'];
     }
 
     /**

@@ -1,3 +1,8 @@
 <?php
+function __autoload($className) {
+    require_once("php-classes/$className.php");
+}
 
-phpinfo();
+$app = Application::getInstance();
+
+var_dump($app);
